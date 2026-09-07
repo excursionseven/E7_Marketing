@@ -1,5 +1,7 @@
 // Excursion Seven Marketing Group - Interactive Site Controller
 
+const formLoadTimestamp = Date.now();
+
 document.addEventListener('DOMContentLoaded', () => {
   initIcons();
   initHeaderScroll();
@@ -56,15 +58,17 @@ function initMobileMenu() {
 }
 
 /* --------------------------------------------------
-   3. Live Exclusive Lead Dispatch Ticker Simulation
+   3. Localized Live Lead Dispatch Ticker (Farmington Hills & Nearby)
 -------------------------------------------------- */
 const sampleLeads = [
-  { trade: 'Tree Trimming & Removal', location: 'Dallas, TX', status: 'Priority Partner Claimed', time: '1m ago' },
-  { trade: 'Gutter Flushing & Guards', location: 'Atlanta, GA', status: 'First Right Window Open', time: '3m ago' },
-  { trade: 'Lawn Restoration & Cleanup', location: 'Charlotte, NC', status: 'Priority Partner Claimed', time: '5m ago' },
-  { trade: 'Window & Pressure Wash', location: 'Tampa, FL', status: 'Priority Partner Claimed', time: '8m ago' },
-  { trade: 'Hazardous Tree Removal', location: 'Columbus, OH', status: 'First Right Window Open', time: '12m ago' },
-  { trade: 'Deck Staining & Exterior Repair', location: 'Phoenix, AZ', status: 'Priority Partner Claimed', time: '15m ago' }
+  { trade: 'Tree Trimming & Removal', location: 'Farmington Hills, MI (48331)', status: 'Priority Partner Claimed', time: '1m ago' },
+  { trade: 'Gutter Flushing & Guards', location: 'West Bloomfield, MI (48322)', status: 'First Right Window Open', time: '3m ago' },
+  { trade: 'Lawn Restoration & Cleanup', location: 'Novi, MI (48375)', status: 'Priority Partner Claimed', time: '5m ago' },
+  { trade: 'Window & Pressure Wash', location: 'Livonia, MI (48152)', status: 'Priority Partner Claimed', time: '8m ago' },
+  { trade: 'Hazardous Oak Removal', location: 'Commerce Twp, MI (48382)', status: 'First Right Window Open', time: '12m ago' },
+  { trade: 'Deck Staining & Exterior Repair', location: 'Birmingham, MI (48009)', status: 'Priority Partner Claimed', time: '15m ago' },
+  { trade: 'Overgrown Yard Clearing', location: 'Southfield, MI (48076)', status: 'First Right Window Open', time: '18m ago' },
+  { trade: 'Roof & Siding Soft Wash', location: 'Troy, MI (48084)', status: 'Priority Partner Claimed', time: '22m ago' }
 ];
 
 function initTickerFeed() {
@@ -170,7 +174,34 @@ function initFaqAccordion() {
 }
 
 /* --------------------------------------------------
-   6. Partner Enrollment Modal Logic
+   6. Anti-Spam Bot Filter Protection Engine
+-------------------------------------------------- */
+function validateHumanSubmission(honeypotId, humanCheckId) {
+  // 1. Honeypot check: If hidden honeypot field is filled out, it's an automated bot
+  const honeypotField = document.getElementById(honeypotId);
+  if (honeypotField && honeypotField.value.trim() !== '') {
+    console.warn('[Bot Filter] Submission blocked: Honeypot field triggered.');
+    return { isHuman: false, reason: 'honeypot' };
+  }
+
+  // 2. Time-gate check: Automated spam scripts submit forms in < 1.8 seconds
+  const elapsedTime = Date.now() - formLoadTimestamp;
+  if (elapsedTime < 1800) {
+    console.warn('[Bot Filter] Submission blocked: Rapid-fire submission detected.');
+    return { isHuman: false, reason: 'timegate' };
+  }
+
+  // 3. Human verification checkbox check
+  const humanCheck = document.getElementById(humanCheckId);
+  if (humanCheck && !humanCheck.checked) {
+    return { isHuman: false, reason: 'checkbox' };
+  }
+
+  return { isHuman: true };
+}
+
+/* --------------------------------------------------
+   7. Partner Enrollment Modal Logic
 -------------------------------------------------- */
 function initModal() {
   const modal = document.getElementById('enrollModal');
@@ -210,15 +241,28 @@ function initModal() {
   if (modalForm) {
     modalForm.addEventListener('submit', (e) => {
       e.preventDefault();
+
+      const verification = validateHumanSubmission('m_website_url', 'mHumanCheck');
+      
+      if (!verification.isHuman) {
+        if (verification.reason === 'checkbox') {
+          showToast('Security Error: Please check the "I am a human" verification box.');
+        } else {
+          // Silent bot block to prevent spam scripts from adapting
+          showToast('Automated submission filtered. Please try again.');
+        }
+        return;
+      }
+
       closeModal();
-      showToast('Territory slot check requested! Our team will call you within 15 minutes.');
+      showToast('Territory slot check requested! Our Farmington Hills team will reach out shortly.');
       modalForm.reset();
     });
   }
 }
 
 /* --------------------------------------------------
-   7. Form Handling & Toast Notifications
+   8. Form Handling & Toast Notifications
 -------------------------------------------------- */
 function initForms() {
   const contractorForm = document.getElementById('contractorForm');
@@ -226,7 +270,19 @@ function initForms() {
   if (contractorForm) {
     contractorForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      showToast('Application Submitted! An E7 onboarding specialist will contact you shortly.');
+
+      const verification = validateHumanSubmission('b_website_url', 'cHumanCheck');
+
+      if (!verification.isHuman) {
+        if (verification.reason === 'checkbox') {
+          showToast('Security Error: Please check the "I am a human" verification box.');
+        } else {
+          showToast('Automated submission filtered. Please try again.');
+        }
+        return;
+      }
+
+      showToast('Application Verified & Submitted! An E7 Farmington Hills specialist will contact you shortly.');
       contractorForm.reset();
     });
   }
@@ -246,7 +302,7 @@ function showToast(msg) {
 }
 
 /* --------------------------------------------------
-   8. Smooth Scroll for Navigation Anchors
+   9. Smooth Scroll for Navigation Anchors
 -------------------------------------------------- */
 function initSmoothScroll() {
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
