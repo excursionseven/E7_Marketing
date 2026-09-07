@@ -1,0 +1,15 @@
+{
+  "name": "e7-marketing-group",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "lucide": "^1.42.0",
+    "vite": "^5.4.21"
+  }
+}
